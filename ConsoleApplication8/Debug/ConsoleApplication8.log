@@ -1,15 +1,24 @@
-﻿Build started 11.1.2017 г. 21:53:52.
+﻿Build started 11.1.2017 г. 22:29:18.
      1>Project "C:\Users\stanislav\Documents\Visual Studio 2013\Projects\balanced-search-tree-sda4\ConsoleApplication8\ConsoleApplication8.vcxproj" on node 2 (Build target(s)).
      1>C:\Program Files (x86)\MSBuild\Microsoft.Cpp\v4.0\V120\Microsoft.CppBuild.targets(388,5): warning MSB8028: The intermediate directory (Debug\) contains files shared from another project (ConsoleApplication8.vcxproj).  This can lead to incorrect clean and rebuild behavior.
      1>ClCompile:
          C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /sdl /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /D _LIB /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt main.cpp
          main.cpp
-     1>c:\users\stanislav\documents\visual studio 2013\projects\balanced-search-tree-sda4\consoleapplication8\avltree.h(148): error C2039: 'left' : is not a member of 'Node<T>'
+     1>c:\users\stanislav\documents\visual studio 2013\projects\balanced-search-tree-sda4\consoleapplication8\avltree.h(84): error C2440: '=' : cannot convert from 'Node<T>' to 'Node<T> *'
                  with
                  [
                      T=std::string
                  ]
-                 c:\users\stanislav\documents\visual studio 2013\projects\balanced-search-tree-sda4\consoleapplication8\avltree.h(146) : while compiling class template member function 'void AVLTree<std::string>::add(Node<T> *,int)'
+                 No user-defined-conversion operator available that can perform this conversion, or the operator cannot be called
+                 c:\users\stanislav\documents\visual studio 2013\projects\balanced-search-tree-sda4\consoleapplication8\avltree.h(83) : while compiling class template member function 'AVLTree<std::string>::AVLTree(void)'
+                 c:\users\stanislav\documents\visual studio 2013\projects\balanced-search-tree-sda4\consoleapplication8\main.cpp(107) : see reference to function template instantiation 'AVLTree<std::string>::AVLTree(void)' being compiled
+                 c:\users\stanislav\documents\visual studio 2013\projects\balanced-search-tree-sda4\consoleapplication8\main.cpp(107) : see reference to class template instantiation 'AVLTree<std::string>' being compiled
+     1>c:\users\stanislav\documents\visual studio 2013\projects\balanced-search-tree-sda4\consoleapplication8\avltree.h(156): error C2039: 'left' : is not a member of 'Node<T>'
+                 with
+                 [
+                     T=std::string
+                 ]
+                 c:\users\stanislav\documents\visual studio 2013\projects\balanced-search-tree-sda4\consoleapplication8\avltree.h(154) : while compiling class template member function 'void AVLTree<std::string>::add(Node<T> *,int)'
                  with
                  [
                      T=std::string
@@ -19,16 +28,15 @@
                  [
                      T=std::string
                  ]
-                 c:\users\stanislav\documents\visual studio 2013\projects\balanced-search-tree-sda4\consoleapplication8\main.cpp(107) : see reference to class template instantiation 'AVLTree<std::string>' being compiled
-     1>c:\users\stanislav\documents\visual studio 2013\projects\balanced-search-tree-sda4\consoleapplication8\avltree.h(148): error C3861: 'insert': identifier not found
-     1>c:\users\stanislav\documents\visual studio 2013\projects\balanced-search-tree-sda4\consoleapplication8\avltree.h(150): error C2039: 'right' : is not a member of 'Node<T>'
+     1>c:\users\stanislav\documents\visual studio 2013\projects\balanced-search-tree-sda4\consoleapplication8\avltree.h(156): error C3861: 'insert': identifier not found
+     1>c:\users\stanislav\documents\visual studio 2013\projects\balanced-search-tree-sda4\consoleapplication8\avltree.h(158): error C2039: 'right' : is not a member of 'Node<T>'
                  with
                  [
                      T=std::string
                  ]
-     1>c:\users\stanislav\documents\visual studio 2013\projects\balanced-search-tree-sda4\consoleapplication8\avltree.h(150): error C3861: 'insert': identifier not found
+     1>c:\users\stanislav\documents\visual studio 2013\projects\balanced-search-tree-sda4\consoleapplication8\avltree.h(158): error C3861: 'insert': identifier not found
      1>Done Building Project "C:\Users\stanislav\Documents\Visual Studio 2013\Projects\balanced-search-tree-sda4\ConsoleApplication8\ConsoleApplication8.vcxproj" (Build target(s)) -- FAILED.
 
 Build FAILED.
 
-Time Elapsed 00:00:00.49
+Time Elapsed 00:00:00.46
