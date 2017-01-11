@@ -24,18 +24,18 @@ public:
 	int key;
 	T data;
 	int subTreeHeight;
-	Node* leftChild;
-	Node* rightChild;
+	Node<T>* leftChild;
+	Node<T>* rightChild;
 	Node(int key, T data);
 
-	friend bool operator< (const Node &c1, const Node &c2)
+	friend bool operator< (const Node<T> &c1, const Node<T> &c2)
 	{
 		if (c1.key == c2.key) return c1.data < d2.data;
 
 		return c1.key < c2.key;
 	}
 
-	friend bool operator> (const Node &c1, const Node &c2)
+	friend bool operator> (const Node<T> &c1, const Node<T> &c2)
 	{
 		if (c1.key == c2.key) return c1.data > d2.data;
 
@@ -51,20 +51,22 @@ public:
 template <typename T>
 class AVLTree{
 public:
-	void add(Node<T>* el, int key);
+	AVLTree();
+	Node<T>* add(Node<T>* el, int key);
 	bool remove(Node<T>* el, int key, std::string data);
 	int search(Node<T>* el, int key, std::string data);
 	int removeAll(Node<T>* el, int key);
 
 private:
-	char subTreeHeight(Node<T>* el);
+	int subTreeHeight(Node<T>* el);
 	int balanceFactor(Node<T>* el);
 	void fixHeight(Node<T>* el);
 	Node<T>* rotateRight(Node<T>* el);
 	Node<T>* rotateLeft(Node<T>* el);
-	void balance(Node<T>* el);
+	Node<T>* balance(Node<T>* el);
 	Node<T>* findMin(Node<T>* el);
 	Node<T>* removeMin(Node<T>* el);
+	Node<T>* root;
 };
 
 template <typename T>
@@ -77,7 +79,13 @@ Node<T>::Node(int key, T data)
 }
 
 template <typename T>
-char AVLTree<T>::subTreeHeight(Node<T>* el)
+AVLTree<T>::AVLTree()
+{
+	root = new Node<T>(0, "data");
+}
+
+template <typename T>
+int AVLTree<T>::subTreeHeight(Node<T>* el)
 {
 	return el ? el->subTreeHeight : 0;
 }
@@ -119,7 +127,7 @@ Node<T>* AVLTree<T>::rotateLeft(Node<T>* el)
 }
 
 template <typename T>
-void AVLTree<T>::balance(Node<T>* el)
+Node<T>* AVLTree<T>::balance(Node<T>* el)
 {
 	fixHeight(el);
 
@@ -129,25 +137,26 @@ void AVLTree<T>::balance(Node<T>* el)
 	{
 		if (balanceFactor(el->rightChild) < 0)
 			el->rightChild = rotateRight(el->rightChild);
-		return rotateLeft(p);
+		return rotateLeft(el);
 	}
 	else if (balanceFactor(el) == -2)
 	{
 		if (balanceFactor(el->leftChild) > 0)
 			el->leftChild = rotateLeft(el->leftChild);
-		return rotateRight(p);
+		return rotateRight(el);
 	}
 
-	return p;
+	return el;
 }
 
 template <typename T>
-void AVLTree<T>::add(Node<T>* p, int k)
+Node<T>* AVLTree<T>::add(Node<T>* p, int k)
 {
 	if (k < p->key)
-		p->left = insert(p->left, k);
+		p->leftChild = add(p->leftChild, k);
 	else
-		p->right = insert(p->right, k);
+		p->rightChild = add(p->rightChild, k);
+
 	return balance(p);
 }
 
@@ -178,11 +187,11 @@ bool AVLTree<T>::remove(Node<T>* el, int key, std::string data)
 		el->rightChild = remove(el->rightChild, key);
 	else //  key == el->key 
 	{
-		node* q = el->leftChild;
-		node* r = el->rightChild;
+		Node<T>* q = el->leftChild;
+		Node<T>* r = el->rightChild;
 		delete el;
 		if (!r) return q;
-		node* min = findMin(r);
+		Node<T>* min = findMin(r);
 		min->rightChild = removeMin(r);
 		min->leftChild = q;
 		return balance(min);
