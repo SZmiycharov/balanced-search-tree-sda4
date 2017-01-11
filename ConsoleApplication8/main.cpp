@@ -117,7 +117,7 @@ int main(int argc, char* argv[])
 
 		if (command[0] == "àdd")
 		{
-			tree.add(el, 1);
+			//tree.add(el, 1);
 		}
 		else if (command[0] == "remove")
 		{
