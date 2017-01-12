@@ -16,16 +16,16 @@ template <typename T>
 class Node 
 {
 public:
-	T key;
+	int key;
 	int balance;
 	Node *leftChild, *rightChild, *parent;
 
-	Node(T k, Node *p);
+	Node(int k, Node *p);
 	~Node();
 };
 
 template <typename T>
-Node<T>::Node(T k, Node *p)
+Node<T>::Node(int k, Node *p)
 {
 	key = k;
 	balance = 0;

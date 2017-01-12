@@ -18,14 +18,16 @@
 #include "Node.h"
 
 /* AVL tree */
-template <class T>
+template <typename T>
 class AVLTree 
 {
 public:
 	AVLTree();
 	~AVLTree();
-	bool add(T key);
-	void remove(const T key);
+	bool add(int key);
+	void remove(const int key);
+	void removeAll(const int key);
+	void search(const int key);
 
 private:
 	Node<T> *root;
@@ -39,20 +41,20 @@ private:
 	void setBalance(Node<T> *n);
 };
 
-template <class T>
+template <typename T>
 AVLTree<T>::AVLTree()
 {
 	root = NULL;
 }
 
-template <class T>
+template <typename T>
 AVLTree<T>::~AVLTree() 
 {
 	delete root;
 }
 
-template <class T>
-bool AVLTree<T>::add(T key)
+template <typename T>
+bool AVLTree<T>::add(int key)
 {
 	if (root == NULL)
 	{
@@ -92,10 +94,14 @@ bool AVLTree<T>::add(T key)
 	return true;
 }
 
-template <class T>
-void AVLTree<T>::remove(const T delKey)
+template <typename T>
+void AVLTree<T>::remove(const int delKey)
 {
-	if (root == NULL) return;
+	if (root == NULL)
+	{
+		cout << "false" << endl;
+		return;
+	}
 
 	Node<T> *n = root;
 	Node<T> *parent = root;
@@ -112,6 +118,7 @@ void AVLTree<T>::remove(const T delKey)
 
 	if (delNode != NULL)
 	{
+		cout << "true" << endl;
 		delNode->key = n->key;
 
 		child = n->leftChild != NULL ? n->leftChild : n->rightChild;
@@ -134,9 +141,26 @@ void AVLTree<T>::remove(const T delKey)
 			rebalance(parent);
 		}
 	}
+	else
+	{
+		cout << "false" << endl;
+	}
 }
 
-template <class T>
+template <typename T>
+void AVLTree<T>::removeAll(const int key)
+{
+	remove(key);
+}
+
+template <typename T>
+void AVLTree<T>::search(const int key)
+{
+	cout << "searching!!!" << endl;
+}
+
+
+template <typename T>
 Node<T>* AVLTree<T>::rotateLeft(Node<T> *a)
 {
 	Node<T> *b = a->rightChild;
@@ -168,7 +192,7 @@ Node<T>* AVLTree<T>::rotateLeft(Node<T> *a)
 	return b;
 }
 
-template <class T>
+template <typename T>
 Node<T>* AVLTree<T>::rotateRight(Node<T> *a)
 {
 	Node<T> *b = a->leftChild;
@@ -199,21 +223,21 @@ Node<T>* AVLTree<T>::rotateRight(Node<T> *a)
 	return b;
 }
 
-template <class T>
+template <typename T>
 Node<T>* AVLTree<T>::rotateLeftThenRight(Node<T> *n)
 {
 	n->leftChild = rotateLeft(n->leftChild);
 	return rotateRight(n);
 }
 
-template <class T>
+template <typename T>
 Node<T>* AVLTree<T>::rotateRightThenLeft(Node<T> *n)
 {
 	n->rightChild = rotateRight(n->rightChild);
 	return rotateLeft(n);
 }
 
-template <class T>
+template <typename T>
 void AVLTree<T>::rebalance(Node<T> *n) 
 {
 	setBalance(n);
@@ -251,7 +275,7 @@ void AVLTree<T>::rebalance(Node<T> *n)
 	}
 }
 
-template <class T>
+template <typename T>
 int AVLTree<T>::height(Node<T> *n) 
 {
 	if (n == NULL) return -1;
@@ -260,8 +284,9 @@ int AVLTree<T>::height(Node<T> *n)
 		height(n->leftChild) + 1 : height(n->rightChild) + 1;
 }
 
-template <class T>
-void AVLTree<T>::setBalance(Node<T> *n) {
+template <typename T>
+void AVLTree<T>::setBalance(Node<T> *n) 
+{
 	n->balance = height(n->rightChild) - height(n->leftChild);
 }
 

@@ -35,38 +35,6 @@ void splitStringToArray(const string &str, char delimeter, string(&command)[3]) 
 	}
 }
 
-template <typename T>
-void handleAddCommand(int key, string data, AVLTree<T> &tree)
-{
-	int key;
-	assert(istringstream(command[1]) >> key);
-	string data = command[2];
-
-	tree.add(key, data);
-}
-
-template <typename T>
-void handleRemoveCommand(int key, string data, AVLTree<T> &tree)
-{
-	int key;
-	assert(istringstream(command[1]) >> key);
-	string data = command[2];
-
-	tree.remove(key, data);
-}
-
-template <typename T>
-void handleRemoveAllCommand(int key, AVLTree<T> &tree)
-{
-	tree.removeAll(key);
-}
-
-template <typename T>
-void handleSearchCommand(int key, string data, AVLTree<T> &tree)
-{
-
-}
-
 void writeToFile(int key, int dataSize, char* data, char* fileName)
 {
 	std::fstream writeFile;
@@ -81,14 +49,14 @@ void writeToFile(int key, int dataSize, char* data, char* fileName)
 	}
 	else
 	{
-		cerr << "Unable to open file " << fileName << "\n";
-		exit(EXIT_FAILURE);
+		cout << "FAIL!!" << endl;
 	}
 
 	writeFile.close();
 }
 
-void readFromFile(char* fileName)
+template <typename T>
+void readFromFile(char* fileName, AVLTree<T> &tree)
 {
 	std::fstream readFile;
 
@@ -98,11 +66,8 @@ void readFromFile(char* fileName)
 	readFile.open(fileName, std::ios_base::binary | std::ios_base::in);
 	if (readFile.is_open())
 	{
-		while (true)
+		while (readFile.read((char*)&key, 4))
 		{
-			if (readFile.eof()) break;
-
-			readFile.read((char*)&key, 4);
 			readFile.read((char*)&dataSize, 4);
 
 			char* dataString = new char[dataSize];
@@ -114,6 +79,8 @@ void readFromFile(char* fileName)
 				cout << dataString[i];
 			}
 			cout << endl;
+
+			tree.add(key);
 		}
 	}
 	else
@@ -123,72 +90,72 @@ void readFromFile(char* fileName)
 	}
 }
 
-int main(int argc, char* argv[])
+void validateCmdParams(int argc, char* argv[])
 {
-	if (argc < 2)
+	if (argc != 2)
 	{
 		cerr << "Usage: " << argv[0] << " <fileName>" << "\n";
 		system("pause");
 		exit(EXIT_FAILURE);
 	}
+}
+
+template <typename T>
+void handleCommand(string line, AVLTree<T> &tree)
+{
+	int key;
+	string data;
+	string command[3];
+
+	splitStringToArray(line, ' ', command);
+	//cout << command[0] << endl;
+		
+	assert(istringstream(command[1]) >> key);
+	data = command[2];
+
+	if (command[0] == "àdd")
+	{
+		tree.add(key);
+	}
+	else if (command[0] == "remove")
+	{
+		tree.remove(key);
+	}
+	else if (command[0] == "removeall")
+	{
+		tree.removeAll(key);
+	}
+	else if (command[0] == "search")
+	{
+		tree.search(key);
+	}
+
+	command[0] = '\0';
+}
+
+int main(int argc, char* argv[])
+{
+	//
+	//test.bin contains keys: 1, 2, 5, 3, 4, 6
+	//
+
+	validateCmdParams(argc, argv);
 
 	char* fileName = argv[1];
 
-	ifstream fileCommands(fileName);
-
-	if (fileCommands.is_open())
-	{
-		string data;
-		int key;
-
-		while (fileCommands >> key >> data)
-		{
-			cout << key << " " << data << endl;
-		}
-
-
-		fileCommands.close();
-	}
-	else
-	{
-		cerr << "Unable to open file " << fileName << "\n";
-		exit(EXIT_FAILURE);
-	}
-
-	string command[3];
 	string line;
-	int key;
-	string data;
-	AVLTree<string> tree;
+	AVLTree<int> tree;
+
+	readFromFile(fileName, tree);
+
+	tree.remove(5);
+	tree.remove(2);
+	tree.remove(2);
 
 	while (getline(cin, line))
 	{
-		splitStringToArray(line, ' ', command);
-		cout << command[0] << endl;
-		
-		assert(istringstream(command[1]) >> key);
-		data = command[2];
-
-		if (command[0] == "àdd")
-		{
-			//tree.add(el, 1);
-		}
-		else if (command[0] == "remove")
-		{
-			//tree.remove(key, data);
-		}
-		else if (command[0] == "removeall")
-		{
-			//tree.removeAll(key);
-		}
-		else if (command[0] == "search")
-		{
-			//tree.search(key, data);
-		}
-
-		command[0] = '\0';
+		handleCommand(line, tree);
 	}
-
 
 	system("pause");
 	return 0;
