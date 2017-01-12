@@ -12,195 +12,262 @@
 *
 */
 
-#include <assert.h>
-#include <exception>
-#include <stdlib.h>
-#include <string>
+#include <algorithm>
+#include <iostream>
 
-template <typename T>
-class Node
+#include "Node.h"
+
+/* AVL tree */
+template <class T>
+class AVLTree 
 {
-public:
-	int key;
-	T data;
-	int subTreeHeight;
-	Node<T>* leftChild;
-	Node<T>* rightChild;
-	Node(int key, T data);
-
-	friend bool operator< (const Node<T> &c1, const Node<T> &c2)
-	{
-		if (c1.key == c2.key) return c1.data < d2.data;
-
-		return c1.key < c2.key;
-	}
-
-	friend bool operator> (const Node<T> &c1, const Node<T> &c2)
-	{
-		if (c1.key == c2.key) return c1.data > d2.data;
-
-		return c1.key > c2.key;
-	}
-
-	friend bool operator== (const Node &c1, const Node &c2)
-	{
-		return (c1.key == c2.key) && (c1.data == c2.data);
-	}
-};
-
-template <typename T>
-class AVLTree{
 public:
 	AVLTree();
-	Node<T>* add(Node<T>* el, int key);
-	bool remove(Node<T>* el, int key, std::string data);
-	int search(Node<T>* el, int key, std::string data);
-	int removeAll(Node<T>* el, int key);
+	~AVLTree();
+	bool add(T key);
+	void remove(const T key);
 
 private:
-	int subTreeHeight(Node<T>* el);
-	int balanceFactor(Node<T>* el);
-	void fixHeight(Node<T>* el);
-	Node<T>* rotateRight(Node<T>* el);
-	Node<T>* rotateLeft(Node<T>* el);
-	Node<T>* balance(Node<T>* el);
-	Node<T>* findMin(Node<T>* el);
-	Node<T>* removeMin(Node<T>* el);
-	Node<T>* root;
+	Node<T> *root;
+
+	Node<T>* rotateLeft(Node<T> *a);
+	Node<T>* rotateRight(Node<T> *a);
+	Node<T>* rotateLeftThenRight(Node<T> *n);
+	Node<T>* rotateRightThenLeft(Node<T> *n);
+	void rebalance(Node<T> *n);
+	int height(Node<T> *n);
+	void setBalance(Node<T> *n);
 };
 
-template <typename T>
-Node<T>::Node(int key, T data)
-{ 
-	key = key; 
-	data = data;
-	leftChild = rightChild = 0; 
-	subTreeHeight = 1; 
-}
-
-template <typename T>
+template <class T>
 AVLTree<T>::AVLTree()
 {
-	root = new Node<T>(0, "data");
+	root = NULL;
 }
 
-template <typename T>
-int AVLTree<T>::subTreeHeight(Node<T>* el)
+template <class T>
+AVLTree<T>::~AVLTree() 
 {
-	return el ? el->subTreeHeight : 0;
+	delete root;
 }
 
-template <typename T>
-int AVLTree<T>::balanceFactor(Node<T>* el)
+template <class T>
+bool AVLTree<T>::add(T key)
 {
-	return subTreeHeight(el->rightChild) - subTreeHeight(el->leftChild);
-}
-
-template <typename T>
-void AVLTree<T>::fixHeight(Node<T>* el)
-{
-	int heightLeftSubTree = subTreeHeight(el->leftChild);
-	int heightRightSubTree = subTreeHeight(el->rightChild);
-	el->subTreeHeight = (heightLeftSubTree>heightRightSubTree ? heightLeftSubTree : heightRightSubTree) + 1;
-}
-
-template <typename T>
-Node<T>* AVLTree<T>::rotateRight(Node<T>* el)
-{
-	Node<T>* q = el->leftChild;
-	el->leftChild = q->rightChild;
-	q->rightChild = el;
-	fixHeight(el);
-	fixHeight(q);
-	return q;
-}
-
-template <typename T>
-Node<T>* AVLTree<T>::rotateLeft(Node<T>* el)
-{
-	Node<T>* p = el->rightChild;
-	el->rightChild = p->leftChild;
-	p->leftChild = el;
-	fixHeight(el);
-	fixHeight(p);
-	return p;
-}
-
-template <typename T>
-Node<T>* AVLTree<T>::balance(Node<T>* el)
-{
-	fixHeight(el);
-
-	assert(balanceFactor(el) == -2 || balanceFactor(el) == 2);
-
-	if (balanceFactor(el) == 2)
+	if (root == NULL)
 	{
-		if (balanceFactor(el->rightChild) < 0)
-			el->rightChild = rotateRight(el->rightChild);
-		return rotateLeft(el);
+		root = new Node<T>(key, NULL);
 	}
-	else if (balanceFactor(el) == -2)
-	{
-		if (balanceFactor(el->leftChild) > 0)
-			el->leftChild = rotateLeft(el->leftChild);
-		return rotateRight(el);
-	}
-
-	return el;
-}
-
-template <typename T>
-Node<T>* AVLTree<T>::add(Node<T>* p, int k)
-{
-	if (k < p->key)
-		p->leftChild = add(p->leftChild, k);
 	else
-		p->rightChild = add(p->rightChild, k);
-
-	return balance(p);
-}
-
-template <typename T>
-Node<T>* AVLTree<T>::findMin(Node<T>* el)
-{
-	return el->leftChild ? findMin(el->leftChild) : el;
-}
-
-template <typename T>
-Node<T>* AVLTree<T>::removeMin(Node<T>* el)
-{
-	if (el->leftChild == 0)
 	{
-		return el->rightChild;
+		Node<T> *n = root;
+		Node<T> *parent;
+
+		while (true)
+		{
+			if (n->key == key) return false;
+
+			parent = n;
+
+			bool goLeft = n->key > key;
+			n = goLeft ? n->leftChild : n->rightChild;
+
+			if (n == NULL)
+			{
+				if (goLeft)
+				{
+					parent->leftChild = new Node<T>(key, parent);
+				}
+				else
+				{
+					parent->rightChild = new Node<T>(key, parent);
+				}
+
+				rebalance(parent);
+				break;
+			}
+		}
 	}
-	el->leftChild = removeMin(el->leftChild);
-	return balance(el);
+
+	return true;
 }
 
-template <typename T>
-bool AVLTree<T>::remove(Node<T>* el, int key, std::string data)
+template <class T>
+void AVLTree<T>::remove(const T delKey)
 {
-	if (!el) return 0;
-	if (key < el->key)
-		el->leftChild = remove(el->leftChild, key);
-	else if (key > el->key)
-		el->rightChild = remove(el->rightChild, key);
-	else //  key == el->key 
+	if (root == NULL) return;
+
+	Node<T> *n = root;
+	Node<T> *parent = root;
+	Node<T> *delNode = NULL;
+	Node<T> *child = root;
+
+	while (child != NULL)
 	{
-		Node<T>* q = el->leftChild;
-		Node<T>* r = el->rightChild;
-		delete el;
-		if (!r) return q;
-		Node<T>* min = findMin(r);
-		min->rightChild = removeMin(r);
-		min->leftChild = q;
-		return balance(min);
+		parent = n;
+		n = child;
+		child = delKey >= n->key ? n->rightChild : n->leftChild;
+		if (delKey == n->key) delNode = n;
 	}
-	return balance(el);
+
+	if (delNode != NULL)
+	{
+		delNode->key = n->key;
+
+		child = n->leftChild != NULL ? n->leftChild : n->rightChild;
+
+		if (root->key == delKey)
+		{
+			root = child;
+		}
+		else
+		{
+			if (parent->leftChild == n)
+			{
+				parent->leftChild = child;
+			}
+			else
+			{
+				parent->rightChild = child;
+			}
+
+			rebalance(parent);
+		}
+	}
 }
 
-template <typename T>
-int AVLTree<T>::search(Node<T>* el, int key, std::string data)
+template <class T>
+Node<T>* AVLTree<T>::rotateLeft(Node<T> *a)
 {
-	return 5;
+	Node<T> *b = a->rightChild;
+	b->parent = a->parent;
+	a->rightChild = b->leftChild;
+
+	if (a->rightChild != NULL)
+	{
+		a->rightChild->parent = a;
+	}
+
+	b->leftChild = a;
+	a->parent = b;
+
+	if (b->parent != NULL)
+	{
+		if (b->parent->rightChild == a)
+		{
+			b->parent->rightChild = b;
+		}
+		else
+		{
+			b->parent->leftChild = b;
+		}
+	}
+
+	setBalance(a);
+	setBalance(b);
+	return b;
 }
+
+template <class T>
+Node<T>* AVLTree<T>::rotateRight(Node<T> *a)
+{
+	Node<T> *b = a->leftChild;
+	b->parent = a->parent;
+	a->leftChild = b->rightChild;
+
+	if (a->leftChild != NULL)
+	{
+		a->leftChild->parent = a;
+	}
+
+	b->rightChild = a;
+	a->parent = b;
+
+	if (b->parent != NULL) {
+		if (b->parent->rightChild == a)
+		{
+			b->parent->rightChild = b;
+		}
+		else
+		{
+			b->parent->leftChild = b;
+		}
+	}
+
+	setBalance(a);
+	setBalance(b);
+	return b;
+}
+
+template <class T>
+Node<T>* AVLTree<T>::rotateLeftThenRight(Node<T> *n)
+{
+	n->leftChild = rotateLeft(n->leftChild);
+	return rotateRight(n);
+}
+
+template <class T>
+Node<T>* AVLTree<T>::rotateRightThenLeft(Node<T> *n)
+{
+	n->rightChild = rotateRight(n->rightChild);
+	return rotateLeft(n);
+}
+
+template <class T>
+void AVLTree<T>::rebalance(Node<T> *n) 
+{
+	setBalance(n);
+
+	if (n->balance == -2) 
+	{
+		if (height(n->leftChild->leftChild) >= height(n->leftChild->rightChild))
+		{
+			n = rotateRight(n);
+		}
+		else
+		{
+			n = rotateLeftThenRight(n);
+		}
+	}
+	else if (n->balance == 2) 
+	{
+		if (height(n->rightChild->rightChild) >= height(n->rightChild->leftChild))
+		{
+			n = rotateLeft(n);
+		}
+		else
+		{
+			n = rotateRightThenLeft(n);
+		}	
+	}
+
+	if (n->parent != NULL) 
+	{
+		rebalance(n->parent);
+	}
+	else 
+	{
+		root = n;
+	}
+}
+
+template <class T>
+int AVLTree<T>::height(Node<T> *n) 
+{
+	if (n == NULL) return -1;
+
+	return height(n->leftChild) >= height(n->rightChild) ? 
+		height(n->leftChild) + 1 : height(n->rightChild) + 1;
+}
+
+template <class T>
+void AVLTree<T>::setBalance(Node<T> *n) {
+	n->balance = height(n->rightChild) - height(n->leftChild);
+}
+
+
+
+
+
+
+
