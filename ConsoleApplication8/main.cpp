@@ -56,7 +56,7 @@ void writeToFile(int key, int dataSize, char* data, char* fileName)
 }
 
 template <typename T>
-void readFromFile(char* fileName, AVLTree<T> &tree)
+void populateTreeFromFile(char* fileName, AVLTree<T> &tree)
 {
 	std::fstream readFile;
 
@@ -72,15 +72,20 @@ void readFromFile(char* fileName, AVLTree<T> &tree)
 
 			char* dataString = new char[dataSize];
 			readFile.read(dataString, dataSize);
+			//dataString = "test";
 
-			cout << "key: " << key << " dataSize: " << dataSize << " datastring: ";
+			char* data = "";
+
+			cout << "key: *" << key << "* dataSize: *" << dataSize << "* datastring: *";
 			for (int i = 0; i < dataSize; i++)
 			{
 				cout << dataString[i];
+				data[i] == dataString[i];
 			}
-			cout << endl;
+			cout << "* ";
 
-			tree.add(key);
+			tree.add(key, "test");
+			cout << "add successful!" << endl;
 		}
 	}
 	else
@@ -115,11 +120,11 @@ void handleCommand(string line, AVLTree<T> &tree)
 
 	if (command[0] == "àdd")
 	{
-		tree.add(key);
+		tree.add(key, data);
 	}
 	else if (command[0] == "remove")
 	{
-		tree.remove(key);
+		tree.remove(key, "");
 	}
 	else if (command[0] == "removeall")
 	{
@@ -127,7 +132,7 @@ void handleCommand(string line, AVLTree<T> &tree)
 	}
 	else if (command[0] == "search")
 	{
-		tree.search(key);
+		tree.search(key, "");
 	}
 
 	command[0] = '\0';
@@ -139,23 +144,31 @@ int main(int argc, char* argv[])
 	//test.bin contains keys: 1, 2, 5, 3, 4, 6
 	//
 
-	validateCmdParams(argc, argv);
+	//validateCmdParams(argc, argv);
 
 	char* fileName = argv[1];
 
 	string line;
-	AVLTree<int> tree;
+	AVLTree<string> tree;
 
-	readFromFile(fileName, tree);
+	//populateTreeFromFile(fileName, tree);
 
-	tree.remove(5);
-	tree.remove(2);
-	tree.remove(2);
+	tree.add(1, "test");
+	tree.add(2, "slavi");
+	
+
+	cout << "search for 1 test: "; tree.search(1, "test");
+	cout << "\nsearch for 2 slavi: "; tree.search(2, "slavi");
+	cout << "\nsearch for 5 slavi: "; tree.search(5, "slavi");
+
+	/*tree.remove(5, "");
+	tree.remove(2, "");
+	tree.remove(2, "");
 
 	while (getline(cin, line))
 	{
 		handleCommand(line, tree);
-	}
+	}*/
 
 	system("pause");
 	return 0;

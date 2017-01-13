@@ -17,19 +17,21 @@ class Node
 {
 public:
 	int key;
+	T data;
 	int balance;
 	Node *leftChild, *rightChild, *parent;
 
-	Node(int k, Node *p);
+	Node(int k, Node *p, T d);
 	~Node();
 };
 
 template <typename T>
-Node<T>::Node(int k, Node *p)
+Node<T>::Node(int k, Node *p, T d)
 {
 	key = k;
 	balance = 0;
 	parent = p;
+	data = d;
 	leftChild = NULL;
 	rightChild = NULL;
 }

@@ -24,10 +24,10 @@ class AVLTree
 public:
 	AVLTree();
 	~AVLTree();
-	bool add(int key);
-	void remove(const int key);
+	bool add(const int key, T data);
+	void remove(const int key, T data);
 	void removeAll(const int key);
-	void search(const int key);
+	void search(const int key, T data);
 
 private:
 	Node<T> *root;
@@ -54,11 +54,11 @@ AVLTree<T>::~AVLTree()
 }
 
 template <typename T>
-bool AVLTree<T>::add(int key)
+bool AVLTree<T>::add(const int key, T data)
 {
 	if (root == NULL)
 	{
-		root = new Node<T>(key, NULL);
+		root = new Node<T>(key, NULL, data);
 	}
 	else
 	{
@@ -78,11 +78,11 @@ bool AVLTree<T>::add(int key)
 			{
 				if (goLeft)
 				{
-					parent->leftChild = new Node<T>(key, parent);
+					parent->leftChild = new Node<T>(key, parent, data);
 				}
 				else
 				{
-					parent->rightChild = new Node<T>(key, parent);
+					parent->rightChild = new Node<T>(key, parent, data);
 				}
 
 				rebalance(parent);
@@ -95,7 +95,7 @@ bool AVLTree<T>::add(int key)
 }
 
 template <typename T>
-void AVLTree<T>::remove(const int delKey)
+void AVLTree<T>::remove(const int key, T data)
 {
 	if (root == NULL)
 	{
@@ -112,8 +112,8 @@ void AVLTree<T>::remove(const int delKey)
 	{
 		parent = n;
 		n = child;
-		child = delKey >= n->key ? n->rightChild : n->leftChild;
-		if (delKey == n->key) delNode = n;
+		child = key >= n->key ? n->rightChild : n->leftChild;
+		if (key == n->key) delNode = n;
 	}
 
 	if (delNode != NULL)
@@ -123,7 +123,7 @@ void AVLTree<T>::remove(const int delKey)
 
 		child = n->leftChild != NULL ? n->leftChild : n->rightChild;
 
-		if (root->key == delKey)
+		if (root->key == key)
 		{
 			root = child;
 		}
@@ -150,13 +150,35 @@ void AVLTree<T>::remove(const int delKey)
 template <typename T>
 void AVLTree<T>::removeAll(const int key)
 {
-	remove(key);
+	remove(key, "");
 }
 
 template <typename T>
-void AVLTree<T>::search(const int key)
+void AVLTree<T>::search(const int key, T data)
 {
-	cout << "searching!!!" << endl;
+	if (root == NULL)
+	{
+		cout << "false" << endl;
+		return;
+	}
+
+	Node<T> *n = root;
+	Node<T> *parent = root;
+	Node<T> *child = root;
+
+	while (child != NULL)
+	{
+		parent = n;
+		n = child;
+		child = key >= n->key ? n->rightChild : n->leftChild;
+		if (key == n->key && data == n->data)
+		{
+			cout << "true" << endl;
+			return;
+		}
+	}
+
+	cout << "false" << endl;
 }
 
 
