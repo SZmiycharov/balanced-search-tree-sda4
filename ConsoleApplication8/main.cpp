@@ -153,13 +153,21 @@ int main(int argc, char* argv[])
 
 	//populateTreeFromFile(fileName, tree);
 
-	tree.add(1, "test");
+	/*tree.add(1, "test");
 	tree.add(2, "slavi");
+
+	tree.remove(1, "test");
 	
 
 	cout << "search for 1 test: "; tree.search(1, "test");
-	cout << "\nsearch for 2 slavi: "; tree.search(2, "slavi");
-	cout << "\nsearch for 5 slavi: "; tree.search(5, "slavi");
+	cout << "search for 2 slavi: "; tree.search(2, "slavi");
+	cout << "search for 5 slavi: "; tree.search(5, "slavi");*/
+
+	tree.add(1, "test");
+	tree.add(1, "Asd");
+	tree.add(1, "asdasdad");
+
+	cout << tree.removeAll(1);
 
 	/*tree.remove(5, "");
 	tree.remove(2, "");

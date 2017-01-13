@@ -26,7 +26,7 @@ public:
 	~AVLTree();
 	bool add(const int key, T data);
 	void remove(const int key, T data);
-	void removeAll(const int key);
+	int removeAll(const int key);
 	void search(const int key, T data);
 
 private:
@@ -95,7 +95,7 @@ bool AVLTree<T>::add(const int key, T data)
 }
 
 template <typename T>
-void AVLTree<T>::remove(const int key, T data)
+void AVLTree<T>::remove(const int delKey, T data)
 {
 	if (root == NULL)
 	{
@@ -112,8 +112,13 @@ void AVLTree<T>::remove(const int key, T data)
 	{
 		parent = n;
 		n = child;
-		child = key >= n->key ? n->rightChild : n->leftChild;
-		if (key == n->key) delNode = n;
+		child = delKey >= n->key ? n->rightChild : n->leftChild;
+		if (delKey == n->key && data == n->data)
+		{
+			delNode = n;
+			break;
+		}
+		cout << "nodetodelete key: " << delNode->key << "; data: " << delNode->data << endl;
 	}
 
 	if (delNode != NULL)
@@ -123,7 +128,7 @@ void AVLTree<T>::remove(const int key, T data)
 
 		child = n->leftChild != NULL ? n->leftChild : n->rightChild;
 
-		if (root->key == key)
+		if (root->key == delKey && root->data == data)
 		{
 			root = child;
 		}
@@ -138,6 +143,7 @@ void AVLTree<T>::remove(const int key, T data)
 				parent->rightChild = child;
 			}
 
+			cout << "INFO: " << parent->key << "; data: " << parent->data << endl;
 			rebalance(parent);
 		}
 	}
@@ -148,9 +154,76 @@ void AVLTree<T>::remove(const int key, T data)
 }
 
 template <typename T>
-void AVLTree<T>::removeAll(const int key)
+int AVLTree<T>::removeAll(const int delKey)
 {
-	remove(key, "");
+	int nodesRemoved = 0;
+
+	if (root == NULL)
+	{
+		return nodesRemoved;
+	}
+
+	Node<T> *n = root;
+	Node<T> *parent = root;
+	Node<T> *delNode = NULL;
+	Node<T> *child = root;
+	bool toContinue = true;
+
+	while (toContinue)
+	{
+		cout << "HERE ";
+		toContinue = false;
+		while (child != NULL)
+		{
+			parent = n;
+			n = child;
+			child = delKey >= n->key ? n->rightChild : n->leftChild;
+			if (delKey == n->key)
+			{
+				delNode = n;
+				break;
+			}
+		}
+
+		if (delNode != NULL)
+		{
+			toContinue = true;
+			++nodesRemoved;
+			delNode->key = n->key;
+
+			child = n->leftChild != NULL ? n->leftChild : n->rightChild;
+
+			if (root->key == delKey)
+			{
+				root = child;
+			}
+			else
+			{
+				if (parent->leftChild == n)
+				{
+					parent->leftChild = child;
+				}
+				else
+				{
+					parent->rightChild = child;
+				}
+
+				cout << "INFO: " << parent->key << "; data: " << parent->data << endl;
+				rebalance(parent);
+			}
+		}
+		else
+		{
+			return nodesRemoved;
+		}
+
+		n = root;
+		parent = root;
+		delNode = NULL;
+		child = root;
+	}
+
+	return nodesRemoved;
 }
 
 template <typename T>
