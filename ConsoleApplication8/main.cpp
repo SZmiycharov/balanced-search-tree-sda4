@@ -74,17 +74,17 @@ void populateTreeFromFile(char* fileName, AVLTree<T> &tree)
 			readFile.read(dataString, dataSize);
 			//dataString = "test";
 
-			char* data = "";
 
 			cout << "key: *" << key << "* dataSize: *" << dataSize << "* datastring: *";
 			for (int i = 0; i < dataSize; i++)
 			{
 				cout << dataString[i];
-				data[i] == dataString[i];
 			}
 			cout << "* ";
 
-			tree.add(key, "test");
+			dataString[dataSize] = '\0';
+			string data(dataString);
+			tree.add(key, dataString);
 			cout << "add successful!" << endl;
 		}
 	}
@@ -120,7 +120,8 @@ void handleCommand(string line, AVLTree<T> &tree)
 
 	if (command[0] == "àdd")
 	{
-		tree.add(key, data);
+		cout << "key: " << key << "data: " << data << endl;
+		tree.add(key, data); 
 	}
 	else if (command[0] == "remove")
 	{
@@ -143,7 +144,11 @@ int main(int argc, char* argv[])
 	//
 	//test.bin contains keys: 1, 2, 5, 3, 4, 6
 	//
-
+		
+	
+	//	D:\Users\Desktop\test.bin
+	
+	
 	//validateCmdParams(argc, argv);
 
 	char* fileName = argv[1];
@@ -151,7 +156,19 @@ int main(int argc, char* argv[])
 	string line;
 	AVLTree<string> tree;
 
-	//populateTreeFromFile(fileName, tree);
+	populateTreeFromFile("D:\\Users\\Desktop\\test.bin", tree);
+
+	/*tree.remove(1, "test");
+	tree.remove(2, "slavi");
+	tree.remove(3, "slavi");
+	tree.remove(4, "slavi");
+	tree.remove(5, "slavi");
+	tree.remove(6, "slavi");*/
+
+	cout << tree.removeAll(1);
+	tree.add(1, "yolo");
+	tree.remove(1, "yolo");
+
 
 	/*tree.add(1, "test");
 	tree.add(2, "slavi");
@@ -165,36 +182,36 @@ int main(int argc, char* argv[])
 	
 
 
-	tree.add(1, "asdasdad");
+	//tree.add(1, "asdasdad");
 
-	tree.add(1, "Asd");
+	//tree.add(1, "Asd");
 
-	tree.add(1, "test");
+	//tree.add(1, "test");
 
-	tree.add(1, "test");
-
-
+	//tree.add(1, "test");
 
 
-	/*tree.remove(1, "asdasdad");
-	tree.remove(1, "test");*/
 
-	tree.remove(1, "Asd");
-	tree.remove(1, "asdasdad");
-	tree.remove(1, "test");
-	tree.remove(1, "test");
 
+	///*tree.remove(1, "asdasdad");
+	//tree.remove(1, "test");*/
+
+	//tree.remove(1, "Asd");
+	//tree.remove(1, "asdasdad");
+	//tree.remove(1, "test");
 	//tree.remove(1, "test");
 
+	////tree.remove(1, "test");
 
 
-	//cout << tree.removeAll(1);
 
-	/*tree.remove(5, "");
-	tree.remove(2, "");
-	tree.remove(2, "");
+	////cout << tree.removeAll(1);
 
-	while (getline(cin, line))
+	///*tree.remove(5, "");
+	//tree.remove(2, "");
+	//tree.remove(2, "");
+
+	/*while (getline(cin, line))
 	{
 		handleCommand(line, tree);
 	}*/
