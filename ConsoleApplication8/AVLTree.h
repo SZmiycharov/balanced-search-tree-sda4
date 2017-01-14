@@ -63,6 +63,7 @@ void AVLTree<T>::add(const int key, T data)
 	else if (root->key == key && root->data == data)
 	{
 		root->count++;
+		rebalance(root);
 		return;
 	}
 	else
@@ -74,10 +75,9 @@ void AVLTree<T>::add(const int key, T data)
 		{
 			parent = n;
 
-			bool goLeft = n->key > key || (n->key == key && n->data > data);
+			bool goLeft = (n->key > key || (n->key == key && n->data > data));
 			n = goLeft ? n->leftChild : n->rightChild;
 
-			
 			if (n != NULL && n->key == key && n->data == data)
 			{
 				n->count++;
@@ -107,54 +107,42 @@ template <typename T>
 void AVLTree<T>::remove(const int delKey, T data)
 {
 	if (root == NULL)
-	{
-		cout << "false" << endl;
 		return;
-	}
 
-	Node<T> *n = root;
-	Node<T> *parent = root;
-	Node<T> *delNode = NULL;
-	Node<T> *child = root;
+	Node<T>
+		*n = root,
+		*parent = root,
+		*delNode = NULL,
+		*child = root;
 
-	while (child != NULL)
-	{
+	while (child != NULL) {
 		parent = n;
 		n = child;
-		child = (delKey >= n->key && data >= n->data) ? n->rightChild : n->leftChild;
-		if (delKey == n->key && data == n->data)
-		{
+		child = delKey >= n->key ? n->rightChild : n->leftChild;
+		if (delKey == n->key)
 			delNode = n;
-			if (n->count > 1)
-			{
-				n->count--;
-				cout << "true" << endl;
-				return;
-			}
-
-			break;
+		if (n->count > 0)
+		{
+			n->count--;
+			cout << "true" << endl;
+			return;
 		}
 	}
 
-	if (delNode != NULL)
-	{
-		cout << "true" << endl;
+	if (delNode != NULL) {
+		cout << "true";
 		delNode->key = n->key;
 
 		child = n->leftChild != NULL ? n->leftChild : n->rightChild;
 
-		if (root->key == delKey && root->data == data)
-		{
+		if (root->key == delKey) {
 			root = child;
 		}
-		else
-		{
-			if (parent->leftChild == n)
-			{
+		else {
+			if (parent->leftChild == n) {
 				parent->leftChild = child;
 			}
-			else
-			{
+			else {
 				parent->rightChild = child;
 			}
 
@@ -190,7 +178,7 @@ int AVLTree<T>::removeAll(const int delKey)
 		{
 			parent = n;
 			n = child;
-			child = delKey >= n->key ? n->rightChild : n->leftChild;
+			child = (data + std::to_string(delKey)) >= (n->data + std::to_string(n->key)) ? n->rightChild : n->leftChild;
 			if (delKey == n->key)
 			{
 				delNode = n;
@@ -266,7 +254,6 @@ void AVLTree<T>::search(const int key, T data)
 
 	cout << "false" << endl;
 }
-
 
 template <typename T>
 Node<T>* AVLTree<T>::rotateLeft(Node<T> *a)

@@ -162,11 +162,13 @@ int main(int argc, char* argv[])
 	cout << "search for 1 test: "; tree.search(1, "test");
 	cout << "search for 2 slavi: "; tree.search(2, "slavi");
 	cout << "search for 5 slavi: "; tree.search(5, "slavi");*/
-
-	tree.add(1, "test");
-	tree.add(1, "test");
+	
 	tree.add(1, "Asd");
+	tree.add(1, "test");
+	tree.add(1, "test");
 	tree.add(1, "asdasdad");
+
+
 
 	tree.remove(1, "asdasdad");
 	tree.remove(1, "Asd");
