@@ -164,10 +164,15 @@ int main(int argc, char* argv[])
 	cout << "search for 5 slavi: "; tree.search(5, "slavi");*/
 
 	tree.add(1, "test");
+	tree.add(1, "test");
 	tree.add(1, "Asd");
 	tree.add(1, "asdasdad");
 
-	cout << tree.removeAll(1);
+	tree.remove(1, "asdasdad");
+	tree.remove(1, "Asd");
+	tree.remove(1, "test");
+
+	//cout << tree.removeAll(1);
 
 	/*tree.remove(5, "");
 	tree.remove(2, "");

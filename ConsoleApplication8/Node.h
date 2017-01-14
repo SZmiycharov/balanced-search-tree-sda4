@@ -17,8 +17,9 @@ class Node
 {
 public:
 	int key;
-	T data;
 	int balance;
+	int count;
+	T data;
 	Node *leftChild, *rightChild, *parent;
 
 	Node(int k, Node *p, T d);
@@ -34,6 +35,7 @@ Node<T>::Node(int k, Node *p, T d)
 	data = d;
 	leftChild = NULL;
 	rightChild = NULL;
+	count = 1;
 }
 
 template <typename T>

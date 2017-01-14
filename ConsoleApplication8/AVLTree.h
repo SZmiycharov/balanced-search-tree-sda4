@@ -24,7 +24,7 @@ class AVLTree
 public:
 	AVLTree();
 	~AVLTree();
-	bool add(const int key, T data);
+	void add(const int key, T data);
 	void remove(const int key, T data);
 	int removeAll(const int key);
 	void search(const int key, T data);
@@ -54,11 +54,16 @@ AVLTree<T>::~AVLTree()
 }
 
 template <typename T>
-bool AVLTree<T>::add(const int key, T data)
+void AVLTree<T>::add(const int key, T data)
 {
 	if (root == NULL)
 	{
 		root = new Node<T>(key, NULL, data);
+	}
+	else if (root->key == key && root->data == data)
+	{
+		root->count++;
+		return;
 	}
 	else
 	{
@@ -67,12 +72,17 @@ bool AVLTree<T>::add(const int key, T data)
 
 		while (true)
 		{
-			if (n->key == key) return false;
-
 			parent = n;
 
-			bool goLeft = n->key > key;
+			bool goLeft = n->key > key || (n->key == key && n->data > data);
 			n = goLeft ? n->leftChild : n->rightChild;
+
+			
+			if (n != NULL && n->key == key && n->data == data)
+			{
+				n->count++;
+				return;
+			}
 
 			if (n == NULL)
 			{
@@ -91,7 +101,6 @@ bool AVLTree<T>::add(const int key, T data)
 		}
 	}
 
-	return true;
 }
 
 template <typename T>
@@ -112,13 +121,19 @@ void AVLTree<T>::remove(const int delKey, T data)
 	{
 		parent = n;
 		n = child;
-		child = delKey >= n->key ? n->rightChild : n->leftChild;
+		child = (delKey >= n->key && data >= n->data) ? n->rightChild : n->leftChild;
 		if (delKey == n->key && data == n->data)
 		{
 			delNode = n;
+			if (n->count > 1)
+			{
+				n->count--;
+				cout << "true" << endl;
+				return;
+			}
+
 			break;
 		}
-		cout << "nodetodelete key: " << delNode->key << "; data: " << delNode->data << endl;
 	}
 
 	if (delNode != NULL)
@@ -143,7 +158,6 @@ void AVLTree<T>::remove(const int delKey, T data)
 				parent->rightChild = child;
 			}
 
-			cout << "INFO: " << parent->key << "; data: " << parent->data << endl;
 			rebalance(parent);
 		}
 	}
@@ -171,7 +185,6 @@ int AVLTree<T>::removeAll(const int delKey)
 
 	while (toContinue)
 	{
-		cout << "HERE ";
 		toContinue = false;
 		while (child != NULL)
 		{
@@ -188,7 +201,8 @@ int AVLTree<T>::removeAll(const int delKey)
 		if (delNode != NULL)
 		{
 			toContinue = true;
-			++nodesRemoved;
+			nodesRemoved += delNode->count;
+			cout << "delnode key: " << delNode->key << "; data: " << delNode->data << "; count : " << delNode->count << endl;
 			delNode->key = n->key;
 
 			child = n->leftChild != NULL ? n->leftChild : n->rightChild;
@@ -208,7 +222,6 @@ int AVLTree<T>::removeAll(const int delKey)
 					parent->rightChild = child;
 				}
 
-				cout << "INFO: " << parent->key << "; data: " << parent->data << endl;
 				rebalance(parent);
 			}
 		}
@@ -243,7 +256,7 @@ void AVLTree<T>::search(const int key, T data)
 	{
 		parent = n;
 		n = child;
-		child = key >= n->key ? n->rightChild : n->leftChild;
+		child = key > n->key ? n->rightChild : n->leftChild;
 		if (key == n->key && data == n->data)
 		{
 			cout << "true" << endl;
