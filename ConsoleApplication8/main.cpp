@@ -168,12 +168,21 @@ int main(int argc, char* argv[])
 	tree.add(1, "Asd");
 	tree.add(1, "test");
 	tree.add(1, "test");
-	
 
-	tree.remove(1, "Asd");
-	tree.remove(1, "asdasdad");
+	/*tree.remove(1, "asdasdad");
+	
+	cout << "!!!!!!!!!!!!!REMOVED: " << tree.removeAll(1) << endl;
+	tree.remove(1, "test");*/
+
+	/*tree.remove(1, "asdasdad");
 	tree.remove(1, "test");
 
+	tree.remove(1, "Asd");*/
+	/*tree.remove(1, "asdasdad");
+	tree.remove(1, "test");
+	tree.remove(1, "test");
+
+	tree.remove(1, "test");*/
 
 
 
