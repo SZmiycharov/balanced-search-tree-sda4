@@ -107,42 +107,55 @@ template <typename T>
 void AVLTree<T>::remove(const int delKey, T data)
 {
 	if (root == NULL)
+	{
+		cout << "false1" << endl;
 		return;
+	}
 
-	Node<T>
-		*n = root,
-		*parent = root,
-		*delNode = NULL,
-		*child = root;
+	Node<T> *n = root;
+	Node<T> *parent = root;
+	Node<T> *delNode = NULL;
+	Node<T> *child = root;
 
-	while (child != NULL) {
+	while (child != NULL)
+	{
 		parent = n;
 		n = child;
-		child = delKey >= n->key ? n->rightChild : n->leftChild;
-		if (delKey == n->key)
-			delNode = n;
-		if (n->count > 0)
+
+		child = delKey > n->key || (delKey == n->key && data >= n->data) ? n->rightChild : n->leftChild;
+
+		if (delKey == n->key && data == n->data)
 		{
-			n->count--;
-			cout << "true" << endl;
-			return;
+			delNode = n;
+			if (delNode->count > 1)
+			{
+				delNode->count--;
+				cout << "true" << endl;
+				return;
+			}
 		}
 	}
 
-	if (delNode != NULL) {
-		cout << "true";
+	if (delNode != NULL)
+	{
+		cout << "true" << endl;
 		delNode->key = n->key;
+		delNode->data = n->data;
 
 		child = n->leftChild != NULL ? n->leftChild : n->rightChild;
 
-		if (root->key == delKey) {
+		if (root->key == delKey && root->data == data)
+		{
 			root = child;
 		}
-		else {
-			if (parent->leftChild == n) {
+		else
+		{
+			if (parent->leftChild == n)
+			{
 				parent->leftChild = child;
 			}
-			else {
+			else
+			{
 				parent->rightChild = child;
 			}
 
