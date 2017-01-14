@@ -196,7 +196,7 @@ int AVLTree<T>::removeAll(const int delKey)
 			parent = n;
 			n = child;
 
-			child = delKey > n->key ? n->rightChild : n->leftChild;
+			child = delKey >= n->key ? n->rightChild : n->leftChild;
 
 			if (child == NULL && delKey == n->key)
 			{
@@ -248,7 +248,7 @@ int AVLTree<T>::removeAll(const int delKey)
 				rebalance(parent);
 			}
 		}
-		else
+		else if (delNode == NULL)
 		{
 			toContinue = false;
 		}
@@ -258,6 +258,7 @@ int AVLTree<T>::removeAll(const int delKey)
 		delNode = NULL;
 		child = root;
 		data = T();
+		doAnother = true;
 	}
 
 	
