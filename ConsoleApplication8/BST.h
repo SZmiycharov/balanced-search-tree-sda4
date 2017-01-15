@@ -19,25 +19,21 @@ private:
 		node(const DataType& key, node* left = nullptr, node* right = nullptr, int count = 1)
 			: key(key), left(left), right(right), count(count)
 		{
-			string keyParts[2];
+			std::string keyParts[2];
 			BST::splitStringToArray(key, ' ', keyParts);
 
 			assert(istringstream(keyParts[0]) >> id);
 			data = keyParts[1];
-
-			cout << "key: " << id << "; data: " << data << ";" << endl;
-
 		}
 	}*root;
 
-	size_t size;
 
 private:
-	static void splitStringToArray(const string &str, char delimeter, string(&arr)[2])
+	static void splitStringToArray(const std::string &str, char delimeter, std::string(&arr)[2])
 	{
-		stringstream ss;
+		std::stringstream ss;
 		ss.str(str);
-		string item;
+		std::string item;
 
 		int i = 0;
 		while (getline(ss, item, delimeter))
@@ -45,6 +41,38 @@ private:
 			arr[i] = item;
 			++i;
 		}
+	}
+
+	static bool numericFirstStringCompare(const std::string s1, const std::string s2)
+	{
+		if (s1 == "" || s2 == "")
+		{
+			if (s1 == "" && s2 == "") return true;
+			else return false;
+		}
+
+		std::string::const_iterator it1 = s1.begin(), it2 = s2.begin();
+
+		if (isdigit(s1[0]) && isdigit(s2[0])) {
+			int n1, n2;
+			std::stringstream ss(s1);
+			ss >> n1;
+			ss.clear();
+			ss.str(s2);
+			ss >> n2;
+
+			if (n1 != n2) return n1 < n2;
+
+			it1 = std::find_if(s1.begin(), s1.end(), BST::is_not_digit);
+			it2 = std::find_if(s2.begin(), s2.end(), BST::is_not_digit);
+		}
+
+		return std::lexicographical_compare(it1, s1.end(), it2, s2.end());
+	}
+
+	static bool is_not_digit(char c)
+	{
+		return !isdigit(c);
 	}
 
 	void clear(node* root)
@@ -74,7 +102,7 @@ private:
 			cout << "true" << endl;
 			return true;
 		}
-		return key < root->key ? search(root->left, key) : search(root->right, key);
+		return numericFirstStringCompare(key, root->key) ? search(root->left, key) : search(root->right, key);
 	}
 
 	void add(node*& root, const DataType& key)
@@ -89,7 +117,7 @@ private:
 		}
 		else
 		{
-			add(key < root->key ? root->left : root->right, key);
+			add(numericFirstStringCompare(key, root->key) ? root->left : root->right, key);
 		}
 	}
 
@@ -105,7 +133,6 @@ private:
 			if (root->count > 1)
 			{
 				root->count--;
-				--size;
 				cout << "true" << endl;
 				return true;
 			}
@@ -126,21 +153,20 @@ private:
 				mR->right = root->right;
 				root = mR;
 			}
-			--size;
 			cout << "true" << endl;
 			delete toDel;
+			toDel = 0;
 			return true;
 		}
 		else
 		{
-			remove(key < root->key ? root->left : root->right, key);
+			remove(numericFirstStringCompare(key, root->key) ? root->left : root->right, key);
 		}
 	}
 
-	bool removeAll(node*& root, const int id)
+	bool removeByID(node*& root, const int id)
 	{
 		if (!root) {
-			cout << "false" << endl;
 			return false;
 		}
 
@@ -149,8 +175,6 @@ private:
 			if (root->count > 1)
 			{
 				root->count--;
-				--size;
-				cout << "true" << endl;
 				return true;
 			}
 
@@ -170,14 +194,12 @@ private:
 				mR->right = root->right;
 				root = mR;
 			}
-			--size;
-			cout << "true" << endl;
 			delete toDel;
 			return true;
 		}
 		else
 		{
-			removeAll(id < root->id ? root->left : root->right, id);
+			removeByID(id < root->id ? root->left : root->right, id);
 		}
 	}
 
@@ -192,13 +214,12 @@ private:
 	}
 
 public:
-	BST() : root(nullptr), size(0){};
+	BST() : root(nullptr){};
 
 	~BST() { clear(root); }
 
 	BST(const BST& tree)
-		: root(copy(tree.root))
-		, size(tree.size) {};
+		: root(copy(tree.root)) {};
 
 	BST& operator=(const BST& tree)
 	{
@@ -206,41 +227,40 @@ public:
 		{
 			clear(root);
 			root = copy(tree.root);
-			size = tree.size;
 		}
 		return *this;
 	}
 
 	bool search(const DataType& key) const { return search(root, key); }
-	void add(const DataType& key) { add(root, key); ++size; }
+	void add(const DataType& key) { add(root, key); }
 	bool remove(const DataType& key) { return remove(root, key); }
-	int removeAll(const int id) {
-		bool continueRemoving = true;
+	int removeByID(const int id) {
 		int removedElements = 0;
-		while (continueRemoving)
+		bool removedEl = false;
+
+		while (true)
 		{
-			continueRemoving = removeAll(root, id);
-			if (continueRemoving)
-			{
-				++removedElements;
-			}
+			cout << "in while!" << endl;
+			removedEl = removeByID(root, id);
+			if (removedEl) ++removedElements;
+			else break;
 		}
 
 		return removedElements;
 	}
 
-	node* constructBalancedTree(std::string arr[10000], int min, int max)
+	node* sortedArrayToNodes(std::string arr[10000], int min, int max)
 	{
 		if (min == max) return nullptr;
 
 		int median = min + (max - min) / 2;
 
-		return new node(arr[median], constructBalancedTree(arr, min, median), constructBalancedTree(arr, median + 1, max));
+		return new node(arr[median], sortedArrayToNodes(arr, min, median), sortedArrayToNodes(arr, median + 1, max));
 	}
 
-	void makeTree(std::string arr[10000], int min, int max)
+	void constructPerfectlyBalancedTree(std::string arr[10000], int min, int max)
 	{
-		root = constructBalancedTree(arr, min, max);
+		root = sortedArrayToNodes(arr, min, max);
 	}
 
 };

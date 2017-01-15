@@ -44,13 +44,7 @@ void populateArrayFromFile(char* fileName, string(&allCommands)[10000], int &arr
 
 			char* dataString = new char[dataSize];
 			readFile.read(dataString, dataSize);
-			//dataString = "test";
-
-
-			cout << "key: *" << key << "* dataSize: *" << dataSize << "* datastring: *";
-
 			dataString[dataSize] = '\0';
-			cout << "add successful!" << endl;
 			allCommands[arrSize] = to_string(key) + " " + dataString;
 			++arrSize;
 		}
@@ -73,22 +67,29 @@ void validateCmdParams(int argc, char* argv[])
 }
 
 template <typename T>
-void handleCommand(string line, BST<T> &tree)
+void handleCommand(std::string line, BST<T> &tree)
 {
 	int id;
-	string data;
-	string command[3];
+	std::string data;
+	std::string command[3];
 
 	splitStringToArray(line, ' ', command);
 
+	//make sure all strings are terminated
 	command[0][command[0].length()] = '\0';
 	command[1][command[1].length()] = '\0';
 	command[2][command[2].length()] = '\0';
 
+	if (command[0] != "add" && command[0] != "remove" && command[0] != "removeall" && command[0] != "search")
+	{
+		cout << "Unknown command! Accepted commands are: add, remove, removeall, search!" << endl;
+		return;
+	}
+
 	assert(istringstream(command[1]) >> id);
 	data = command[2];
 
-	string key = to_string(id) + " " + data;
+	std::string key = to_string(id) + " " + data;
 
 	data[data.length()] = '\0';
 
@@ -102,41 +103,40 @@ void handleCommand(string line, BST<T> &tree)
 	}
 	else if (command[0] == "removeall")
 	{
-		cout << tree.removeAll(id) << endl;
+		bool removed = false;
+		int deletedElements = 0;
+		cout << "removing all!";
+		cout << tree.removeByID(id) << endl;
 	}
 	else if (command[0] == "search")
 	{
 		tree.search(key);
 	}
-	else
-	{
-		cout << "Unknown command! Accepted commands are: add, remove, removeall, search!" << endl;
-	}
+	
 
 	command[0] = '\0';
 }
 
-void quickSort(string(&arr)[10000], int left, int right) {
+void quickSort(std::string(&arr)[10000], int left, int right) {
 	int i = left, j = right;
-	string tmp;
-	string pivot = arr[(left + right) / 2];
+	std::string tmp;
+	std::string pivot = arr[(left + right) / 2];
 
-	/* partition */
-	while (i <= j) {
-		while (arr[i] < pivot)
-			i++;
-		while (arr[j] > pivot)
-			j--;
-		if (i <= j) {
+	while (i <= j) 
+	{
+		while (arr[i] < pivot) i++;
+		while (arr[j] > pivot) j--;
+
+		if (i <= j) 
+		{
 			tmp = arr[i];
 			arr[i] = arr[j];
 			arr[j] = tmp;
 			i++;
 			j--;
 		}
-	};
+	}
 
-	/* recursion */
 	if (left < j)
 		quickSort(arr, left, j);
 	if (i < right)
@@ -146,40 +146,38 @@ void quickSort(string(&arr)[10000], int left, int right) {
 int main(int argc, char* argv[])
 {
 	//	D:\Users\Desktop\test.bin
+	//make sure we are given file from cmd to read entries from
+//	validateCmdParams(argc, argv);
 
-	string allCommands[10000];
-	//validateCmdParams(argc, argv);
+	std::string allCommands[10000];
+	
 	char* fileName = argv[1];
 	int arrSize = 0;
 
+	//get all entries from file and populate array with keys (id + ' ' + data)
 	populateArrayFromFile("D:\\Users\\Desktop\\test.bin", allCommands, arrSize);
 
-	cout << "arr elements before sort:\n";
-	for (int i = 0; i < arrSize; i++)
-	{
-		cout << allCommands[i] << "*" << endl;
-	}
-	cout << "END\n";
-
+	//sort entry elements to be ready for insertion in tree
 	quickSort(allCommands, 0, arrSize - 1);
 
-	for (int i = 0; i < arrSize; i++)
-	{
-		cout << allCommands[i] << "*" << endl;
-	}
+	BST<std::string> tree;
+	tree.constructPerfectlyBalancedTree(allCommands, 0, arrSize);
 
-	BST<string> tree;
+	std::string line;
 
+	tree.removeByID(1);
+	tree.removeByID(1);
 
-	tree.makeTree(allCommands, 0, arrSize);
+	tree.remove("1 test");
+	tree.remove("1 test");
+	tree.remove("1 test");
 
-	string line;
+	
 
-	while (getline(cin, line))
+	/*while (getline(cin, line))
 	{
 		handleCommand(line, tree);
-	}
-
+	}*/
 
 	system("pause");
 	return 0;
