@@ -12,35 +12,31 @@
 *
 */
 
-template <typename T>
-class Node 
-{
-public:
-	int key;
-	int balance;
-	int count;
-	T data;
-	Node *leftChild, *rightChild, *parent;
+#include "HelperFunctions.h"
 
-	Node(int k, Node *p, T d);
-	~Node();
+template <typename T>
+struct node
+{
+	T key;
+	int id;
+	std::string data;
+	node *left, *right;
+	int count;
+
+	node(const T& k, node* l = nullptr, node* r = nullptr, int c = 1);
 };
 
 template <typename T>
-Node<T>::Node(int k, Node *p, T d)
+node<T>::node(const T& k, node* l = nullptr, node* r = nullptr, int c = 1)
 {
 	key = k;
-	balance = 0;
-	parent = p;
-	data = d;
-	leftChild = NULL;
-	rightChild = NULL;
-	count = 1;
-}
+	left = l;
+	right = r;
+	count = c;
 
-template <typename T>
-Node<T>::~Node()
-{
-	delete leftChild;
-	delete rightChild;
+	std::string keyParts[3];
+	splitStringToArray(key, ' ', keyParts);
+
+	assert(istringstream(keyParts[0]) >> id);
+	data = keyParts[1];
 }

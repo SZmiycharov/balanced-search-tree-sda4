@@ -1,5 +1,16 @@
-// newTryHWSDA4.cpp : Defines the entry point for the console application.
-//
+/**
+*
+* Solution to homework task
+* Data Structures Course
+* Faculty of Mathematics and Informatics of Sofia University
+* Winter semester 2016/2017
+*
+* @author Stanislav Zmiycharov
+* @idnumber 61883
+* @task 4
+* @compiler VC
+*
+*/
 
 
 #include "BST.h"
@@ -121,7 +132,6 @@ void quickSort(std::string(&arr)[10000], int left, int right) {
 
 int main(int argc, char* argv[])
 {
-	//	D:\Users\Desktop\test.bin
 	//make sure we are given file from cmd to read entries from
 	validateCmdParams(argc, argv);
 
