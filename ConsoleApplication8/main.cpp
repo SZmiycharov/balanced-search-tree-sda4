@@ -75,7 +75,7 @@ void validateCmdParams(int argc, char* argv[])
 template <typename T>
 void handleCommand(string line, BST<T> &tree)
 {
-	string key;
+	int id;
 	string data;
 	string command[3];
 
@@ -85,58 +85,32 @@ void handleCommand(string line, BST<T> &tree)
 	command[1][command[1].length()] = '\0';
 	command[2][command[2].length()] = '\0';
 
-	cout << command[0] << endl;
-
-	key = command[1];
+	assert(istringstream(command[1]) >> id);
 	data = command[2];
 
-	key = key + " " + data;
+	string key = to_string(id) + " " + data;
 
 	data[data.length()] = '\0';
 
-	for (int i = 0; i < data.length(); i++)
+	if (command[0] == "add")
 	{
-		cout << "dataIII: " << data[i];
-	}
-	cout << endl << endl;
-
-
-	cout << "data length: " << data.length();
-
-	cout << "command 0 length: " << command[0].length() << endl;
-
-	command[0][command[0].length()] = '\0';
-
-
-	if (command[0] == "àdd")
-	{
-		cout << "ADDING" << endl;
-		cout << "key: " << key << "data: *" << data << "*" << endl;
 		tree.add(key);
 	}
 	else if (command[0] == "remove")
 	{
-		cout << "REMOVE!" << endl;
-		for (int i = 0; i < key.length(); i++)
-		{
-			cout << key[i];
-		}
-		cout << "*" << endl << endl;
 		tree.remove(key);
 	}
 	else if (command[0] == "removeall")
 	{
-		cout << "REMOVEALL" << endl;
-		tree.removeAll(key);
+		cout << tree.removeAll(id) << endl;
 	}
 	else if (command[0] == "search")
 	{
-		cout << "SEARCH" << endl;
 		tree.search(key);
 	}
 	else
 	{
-		cout << "Unknown command! excepted commands are: add, remove, removall, search" << endl;
+		cout << "Unknown command! Accepted commands are: add, remove, removeall, search!" << endl;
 	}
 
 	command[0] = '\0';
