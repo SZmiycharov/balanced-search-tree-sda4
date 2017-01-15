@@ -1,7 +1,4 @@
-#include <iostream>
-#include <algorithm>
-
-using namespace std;
+#include "HelperFunctions.h"
 
 template <class DataType>
 class BST
@@ -19,8 +16,8 @@ private:
 		node(const DataType& key, node* left = nullptr, node* right = nullptr, int count = 1)
 			: key(key), left(left), right(right), count(count)
 		{
-			std::string keyParts[2];
-			BST::splitStringToArray(key, ' ', keyParts);
+			std::string keyParts[3];
+			splitStringToArray(key, ' ', keyParts);
 
 			assert(istringstream(keyParts[0]) >> id);
 			data = keyParts[1];
@@ -29,52 +26,6 @@ private:
 
 
 private:
-	static void splitStringToArray(const std::string &str, char delimeter, std::string(&arr)[2])
-	{
-		std::stringstream ss;
-		ss.str(str);
-		std::string item;
-
-		int i = 0;
-		while (getline(ss, item, delimeter))
-		{
-			arr[i] = item;
-			++i;
-		}
-	}
-
-	static bool numericFirstStringCompare(const std::string s1, const std::string s2)
-	{
-		if (s1 == "" || s2 == "")
-		{
-			if (s1 == "" && s2 == "") return true;
-			else return false;
-		}
-
-		std::string::const_iterator it1 = s1.begin(), it2 = s2.begin();
-
-		if (isdigit(s1[0]) && isdigit(s2[0])) {
-			int n1, n2;
-			std::stringstream ss(s1);
-			ss >> n1;
-			ss.clear();
-			ss.str(s2);
-			ss >> n2;
-
-			if (n1 != n2) return n1 < n2;
-
-			it1 = std::find_if(s1.begin(), s1.end(), BST::is_not_digit);
-			it2 = std::find_if(s2.begin(), s2.end(), BST::is_not_digit);
-		}
-
-		return std::lexicographical_compare(it1, s1.end(), it2, s2.end());
-	}
-
-	static bool is_not_digit(char c)
-	{
-		return !isdigit(c);
-	}
-
 	void clear(node* root)
 	{
 		if (root)
@@ -121,7 +72,7 @@ private:
 		}
 	}
 
-	bool remove(node*& root, const DataType& key)
+	bool removeByKey(node*& root, const DataType& key)
 	{
 		if (!root) {
 			cout << "false" << endl;
@@ -160,7 +111,7 @@ private:
 		}
 		else
 		{
-			remove(numericFirstStringCompare(key, root->key) ? root->left : root->right, key);
+			removeByKey(numericFirstStringCompare(key, root->key) ? root->left : root->right, key);
 		}
 	}
 
@@ -233,14 +184,13 @@ public:
 
 	bool search(const DataType& key) const { return search(root, key); }
 	void add(const DataType& key) { add(root, key); }
-	bool remove(const DataType& key) { return remove(root, key); }
-	int removeByID(const int id) {
+	bool removeByKey(const DataType& key) { return removeByKey(root, key); }
+	int removeAllByID(const int id) {
 		int removedElements = 0;
 		bool removedEl = false;
 
 		while (true)
 		{
-			cout << "in while!" << endl;
 			removedEl = removeByID(root, id);
 			if (removedEl) ++removedElements;
 			else break;
@@ -264,3 +214,4 @@ public:
 	}
 
 };
+

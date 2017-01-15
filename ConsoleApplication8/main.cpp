@@ -1,32 +1,10 @@
 // newTryHWSDA4.cpp : Defines the entry point for the console application.
 //
 
-#include "stdafx.h"
-
-#include <iostream>
-#include <fstream>
-#include <sstream>
-#include <assert.h>
-#include <cstdlib>
-#include <string>
 
 #include "BST.h"
 
 using namespace std;
-
-void splitStringToArray(const string &str, char delimeter, string(&command)[3])
-{
-	stringstream ss;
-	ss.str(str);
-	string item;
-
-	int i = 0;
-	while (getline(ss, item, delimeter))
-	{
-		command[i] = item;
-		++i;
-	}
-}
 
 void populateArrayFromFile(char* fileName, string(&allCommands)[10000], int &arrSize)
 {
@@ -99,21 +77,19 @@ void handleCommand(std::string line, BST<T> &tree)
 	}
 	else if (command[0] == "remove")
 	{
-		tree.remove(key);
+		tree.removeByKey(key);
 	}
 	else if (command[0] == "removeall")
 	{
 		bool removed = false;
 		int deletedElements = 0;
-		cout << "removing all!";
-		cout << tree.removeByID(id) << endl;
+		cout << tree.removeAllByID(id) << endl;
 	}
 	else if (command[0] == "search")
 	{
 		tree.search(key);
 	}
 	
-
 	command[0] = '\0';
 }
 
@@ -147,7 +123,7 @@ int main(int argc, char* argv[])
 {
 	//	D:\Users\Desktop\test.bin
 	//make sure we are given file from cmd to read entries from
-//	validateCmdParams(argc, argv);
+	validateCmdParams(argc, argv);
 
 	std::string allCommands[10000];
 	
@@ -155,7 +131,7 @@ int main(int argc, char* argv[])
 	int arrSize = 0;
 
 	//get all entries from file and populate array with keys (id + ' ' + data)
-	populateArrayFromFile("D:\\Users\\Desktop\\test.bin", allCommands, arrSize);
+	populateArrayFromFile(fileName, allCommands, arrSize);
 
 	//sort entry elements to be ready for insertion in tree
 	quickSort(allCommands, 0, arrSize - 1);
@@ -165,19 +141,10 @@ int main(int argc, char* argv[])
 
 	std::string line;
 
-	tree.removeByID(1);
-	tree.removeByID(1);
-
-	tree.remove("1 test");
-	tree.remove("1 test");
-	tree.remove("1 test");
-
-	
-
-	/*while (getline(cin, line))
+	while (getline(cin, line))
 	{
 		handleCommand(line, tree);
-	}*/
+	}
 
 	system("pause");
 	return 0;
