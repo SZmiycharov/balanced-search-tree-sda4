@@ -1,16 +1,7 @@
-/**
-*
-* Solution to homework task
-* Data Structures Course
-* Faculty of Mathematics and Informatics of Sofia University
-* Winter semester 2016/2017
-*
-* @author Stanislav Zmiycharov
-* @idnumber 61883
-* @task 4
-* @compiler VC
-*
-*/
+// newTryHWSDA4.cpp : Defines the entry point for the console application.
+//
+
+#include "stdafx.h"
 
 #include <iostream>
 #include <fstream>
@@ -18,45 +9,26 @@
 #include <assert.h>
 #include <cstdlib>
 #include <string>
-#include "AVLTree.h"
+
+#include "BST.h"
 
 using namespace std;
 
-void splitStringToArray(const string &str, char delimeter, string(&command)[3]) {
+void splitStringToArray(const string &str, char delimeter, string(&command)[3])
+{
 	stringstream ss;
 	ss.str(str);
 	string item;
 
 	int i = 0;
-	while (getline(ss, item, delimeter)) 
+	while (getline(ss, item, delimeter))
 	{
 		command[i] = item;
 		++i;
 	}
 }
 
-void writeToFile(int key, int dataSize, char* data, char* fileName)
-{
-	std::fstream writeFile;
-
-	writeFile.open(fileName, std::fstream::binary | std::fstream::app);
-
-	if (writeFile.is_open())
-	{
-		writeFile.write((char*)&key, sizeof(key));
-		writeFile.write((char*)&dataSize, sizeof(dataSize));
-		writeFile.write(data, sizeof(char)*dataSize);
-	}
-	else
-	{
-		cout << "FAIL!!" << endl;
-	}
-
-	writeFile.close();
-}
-
-template <typename T>
-void populateTreeFromFile(char* fileName, AVLTree<T> &tree)
+void populateArrayFromFile(char* fileName, string(&allCommands)[10000], int &arrSize)
 {
 	std::fstream readFile;
 
@@ -76,16 +48,11 @@ void populateTreeFromFile(char* fileName, AVLTree<T> &tree)
 
 
 			cout << "key: *" << key << "* dataSize: *" << dataSize << "* datastring: *";
-			for (int i = 0; i < dataSize; i++)
-			{
-				cout << dataString[i];
-			}
-			cout << "* ";
 
 			dataString[dataSize] = '\0';
-			string data(dataString);
-			tree.add(key, dataString);
 			cout << "add successful!" << endl;
+			allCommands[arrSize] = to_string(key) + " " + dataString;
+			++arrSize;
 		}
 	}
 	else
@@ -106,117 +73,140 @@ void validateCmdParams(int argc, char* argv[])
 }
 
 template <typename T>
-void handleCommand(string line, AVLTree<T> &tree)
+void handleCommand(string line, BST<T> &tree)
 {
-	int key;
+	string key;
 	string data;
 	string command[3];
 
 	splitStringToArray(line, ' ', command);
-	//cout << command[0] << endl;
-		
-	assert(istringstream(command[1]) >> key);
+
+	command[0][command[0].length()] = '\0';
+	command[1][command[1].length()] = '\0';
+	command[2][command[2].length()] = '\0';
+
+	cout << command[0] << endl;
+
+	key = command[1];
 	data = command[2];
+
+	key = key + " " + data;
+
+	data[data.length()] = '\0';
+
+	for (int i = 0; i < data.length(); i++)
+	{
+		cout << "dataIII: " << data[i];
+	}
+	cout << endl << endl;
+
+
+	cout << "data length: " << data.length();
+
+	cout << "command 0 length: " << command[0].length() << endl;
+
+	command[0][command[0].length()] = '\0';
+
 
 	if (command[0] == "àdd")
 	{
-		cout << "key: " << key << "data: " << data << endl;
-		tree.add(key, data); 
+		cout << "ADDING" << endl;
+		cout << "key: " << key << "data: *" << data << "*" << endl;
+		tree.add(key);
 	}
 	else if (command[0] == "remove")
 	{
-		tree.remove(key, "");
+		cout << "REMOVE!" << endl;
+		for (int i = 0; i < key.length(); i++)
+		{
+			cout << key[i];
+		}
+		cout << "*" << endl << endl;
+		tree.remove(key);
 	}
 	else if (command[0] == "removeall")
 	{
+		cout << "REMOVEALL" << endl;
 		tree.removeAll(key);
 	}
 	else if (command[0] == "search")
 	{
-		tree.search(key, "");
+		cout << "SEARCH" << endl;
+		tree.search(key);
+	}
+	else
+	{
+		cout << "Unknown command! excepted commands are: add, remove, removall, search" << endl;
 	}
 
 	command[0] = '\0';
 }
 
+void quickSort(string(&arr)[10000], int left, int right) {
+	int i = left, j = right;
+	string tmp;
+	string pivot = arr[(left + right) / 2];
+
+	/* partition */
+	while (i <= j) {
+		while (arr[i] < pivot)
+			i++;
+		while (arr[j] > pivot)
+			j--;
+		if (i <= j) {
+			tmp = arr[i];
+			arr[i] = arr[j];
+			arr[j] = tmp;
+			i++;
+			j--;
+		}
+	};
+
+	/* recursion */
+	if (left < j)
+		quickSort(arr, left, j);
+	if (i < right)
+		quickSort(arr, i, right);
+}
+
 int main(int argc, char* argv[])
 {
-	//
-	//test.bin contains keys: 1, 2, 5, 3, 4, 6
-	//
-		
-	
 	//	D:\Users\Desktop\test.bin
-	
-	
-	//validateCmdParams(argc, argv);
 
+	string allCommands[10000];
+	//validateCmdParams(argc, argv);
 	char* fileName = argv[1];
+	int arrSize = 0;
+
+	populateArrayFromFile("D:\\Users\\Desktop\\test.bin", allCommands, arrSize);
+
+	cout << "arr elements before sort:\n";
+	for (int i = 0; i < arrSize; i++)
+	{
+		cout << allCommands[i] << "*" << endl;
+	}
+	cout << "END\n";
+
+	quickSort(allCommands, 0, arrSize - 1);
+
+	for (int i = 0; i < arrSize; i++)
+	{
+		cout << allCommands[i] << "*" << endl;
+	}
+
+	BST<string> tree;
+
+
+	tree.makeTree(allCommands, 0, arrSize);
 
 	string line;
-	AVLTree<string> tree;
 
-	populateTreeFromFile("D:\\Users\\Desktop\\test.bin", tree);
-
-	/*tree.remove(1, "test");
-	tree.remove(2, "slavi");
-	tree.remove(3, "slavi");
-	tree.remove(4, "slavi");
-	tree.remove(5, "slavi");
-	tree.remove(6, "slavi");*/
-
-	cout << tree.removeAll(1);
-	tree.add(1, "yolo");
-	tree.remove(1, "yolo");
-
-
-	/*tree.add(1, "test");
-	tree.add(2, "slavi");
-
-	tree.remove(1, "test");
-	
-
-	cout << "search for 1 test: "; tree.search(1, "test");
-	cout << "search for 2 slavi: "; tree.search(2, "slavi");
-	cout << "search for 5 slavi: "; tree.search(5, "slavi");*/
-	
-
-
-	//tree.add(1, "asdasdad");
-
-	//tree.add(1, "Asd");
-
-	//tree.add(1, "test");
-
-	//tree.add(1, "test");
-
-
-
-
-	///*tree.remove(1, "asdasdad");
-	//tree.remove(1, "test");*/
-
-	//tree.remove(1, "Asd");
-	//tree.remove(1, "asdasdad");
-	//tree.remove(1, "test");
-	//tree.remove(1, "test");
-
-	////tree.remove(1, "test");
-
-
-
-	////cout << tree.removeAll(1);
-
-	///*tree.remove(5, "");
-	//tree.remove(2, "");
-	//tree.remove(2, "");
-
-	/*while (getline(cin, line))
+	while (getline(cin, line))
 	{
 		handleCommand(line, tree);
-	}*/
+	}
+
 
 	system("pause");
 	return 0;
 }
-
