@@ -20,7 +20,7 @@ class BST
 private:
 	node<T>* copyFrom(node<T>* root);
 	node<T>* extractMin(node<T>*& root);
-	void clear(node<T>* root);
+	void removeAll(node<T>* root);
 	void addHelper(node<T>*& root, const T& key);
 	bool searchHelper(const node<T>* root, const T& key) const;
 	bool removeByKeyHelper(node<T>*& root, const T& key);
@@ -51,7 +51,7 @@ BST<T>::BST()
 template <typename T>
 BST<T>::~BST() 
 { 
-	clear(root); 
+	removeAll(root); 
 }
 
 template <typename T>
@@ -65,7 +65,7 @@ BST<T>& BST<T>::operator=(const BST& other)
 {
 	if (&other != this)
 	{
-		clear(root);
+		removeAll(root);
 		root = copyFrom(other.root);
 	}
 	return *this;
@@ -141,12 +141,12 @@ node<T>* BST<T>::extractMin(node<T>*& root)
 }
 
 template <typename T>
-void BST<T>::clear(node<T>* root)
+void BST<T>::removeAll(node<T>* root)
 {
 	if (root)
 	{
-		clear(root->left);
-		clear(root->right);
+		removeAll(root->left);
+		removeAll(root->right);
 		delete root;
 	}
 }
@@ -171,11 +171,13 @@ void BST<T>::addHelper(node<T>*& root, const T& key)
 template <typename T>
 bool BST<T>::searchHelper(const node<T>* root, const T& key) const
 {
-	if (!root) {
+	if (!root) 
+	{
 		cout << "false" << endl;
 		return false;
 	}
-	if (root->key == key) {
+	if (root->key == key) 
+	{
 		cout << "true" << endl;
 		return true;
 	}
@@ -185,7 +187,8 @@ bool BST<T>::searchHelper(const node<T>* root, const T& key) const
 template <typename T>
 bool BST<T>::removeByKeyHelper(node<T>*& root, const T& key)
 {
-	if (!root) {
+	if (!root) 
+	{
 		cout << "false" << endl;
 		return false;
 	}
@@ -228,7 +231,8 @@ bool BST<T>::removeByKeyHelper(node<T>*& root, const T& key)
 template <typename T>
 bool BST<T>::removeByID(node<T>*& root, const int id)
 {
-	if (!root) {
+	if (!root)
+	{
 		return false;
 	}
 

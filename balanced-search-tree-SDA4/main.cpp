@@ -104,7 +104,8 @@ void handleCommand(std::string line, BST<T> &tree)
 	command[0] = '\0';
 }
 
-void quickSort(std::string(&arr)[10000], int left, int right) {
+void quickSort(std::string(&arr)[10000], int left, int right) 
+{
 	int i = left, j = right;
 	std::string tmp;
 	std::string pivot = arr[(left + right) / 2];
@@ -132,7 +133,7 @@ void quickSort(std::string(&arr)[10000], int left, int right) {
 
 int main(int argc, char* argv[])
 {
-	//make sure we are given file from cmd to read entries from
+	//make sure we are given a file from cmd to read entries from
 	validateCmdParams(argc, argv);
 
 	std::string allCommands[10000];
